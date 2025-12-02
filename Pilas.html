@@ -1,0 +1,30 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pilas</title>
+  </head>
+  <body>
+    <h1>Pilas</h1>
+    <br />
+    <div>
+      <input id="inputNewPila" type="text" placeholder="Nombre nueva pila" />
+      <button id="btnCreatePila">Crear pila</button>
+
+      <select id="selectPilas" aria-label="Seleccionar pila"></select>
+      <button id="btnDeletePila">Eliminar pila</button>
+      <button id="btnLoadPilas">Recargar desde localStorage</button>
+    </div>
+
+    <div>
+      <input id="inputElemento" type="text" placeholder="Elemento a añadir" />
+      <button id="btnPush">Push</button>
+      <button id="btnPop">Pop</button>
+      <button id="btnClearPila">Vaciar pila</button>
+    </div>
+
+    <div id="stackView" aria-live="polite"></div>
+
+    <script src="controlador.js"></script>
+  </body>
+</html>
