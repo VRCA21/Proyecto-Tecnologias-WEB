@@ -3,20 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pilas</title>
+    <title>Colas</title>
     <link rel="stylesheet" href="Style/Style.css" />
   </head>
 
   <body>
     <section class="pagina-pilas">
       <h2>Introducción</h2>
-      <h3>¿Que son las pilas?</h3>
+      <h3>¿Que son las colas?</h3>
       <p>
-        Una Pila (o Stack) es un tipo de estructura de datos lineal que sigue un
-        principio muy estricto para agregar o eliminar elementos, conocido como
-        LIFO (Last In, First Out, o "Último en Entrar, Primero en Salir"). En
-        otras palabras; Los elementos se apilan de abajo hacia arriba (Hasta
-        abajo está el primero y el último estará hasta arriba).
+        Una cola estructura de datos lineal que sigue el principio FIFO
+        (First-In, First-Out, "el primero en entrar es el primero en salir"),
+        como una fila real: los elementos se agregan al final (enqueue o
+        insertar) y se eliminan del frente (dequeue o quitar), de forma que el
+        primer elemento añadido es el primero en ser procesado o retirado. Se
+        implementa usando arreglos (tamaño fijo) o listas enlazadas (dinámicas),
+        manejando dos punteros: uno para el frente y otro para la parte trasera
+        (final).
       </p>
       <h4>Empecemos...</h4>
 
@@ -34,16 +37,16 @@
         style="display: flex; gap: 20px; margin-bottom: 20px"
       >
         <div style="border: 1px solid #ccc; padding: 10px">
-          <h4>Mis Pilas</h4>
-          <select id="selectPila"></select>
+          <h4>Mis Colas</h4>
+          <select id="selectCola"></select>
           <div style="margin-top: 5px">
             <input
               type="text"
-              id="inputNuevaPila"
-              placeholder="Nombre nueva pila"
+              id="inputNuevaCola"
+              placeholder="Nombre nueva cola"
               size="15"
             />
-            <button id="btnCrearPila">+</button>
+            <button id="btnCrearCola">+</button>
           </div>
         </div>
 
@@ -67,15 +70,15 @@
       </div>
 
       <div class="operaciones">
-        <h3 id="tituloPilaActual">Trabajando en: Principal</h3>
+        <h3 id="tituloColaActual">Trabajando en: Principal</h3>
         <input id="inputElemento" type="text" placeholder="Elemento a añadir" />
         <button id="btnPush">Push</button>
         <button id="btnPop">Pop</button>
-        <button id="btnClearPila">Vaciar pila</button>
+        <button id="btnClearCola">Vaciar cola</button>
       </div>
 
       <div id="stackView" aria-live="polite"></div>
     </section>
-    <script src="JS/Pilas.js"></script>
+    <script src="JS/Colas.js"></script>
   </body>
 </html>
