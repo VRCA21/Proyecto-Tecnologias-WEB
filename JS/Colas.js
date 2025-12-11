@@ -2,20 +2,19 @@ const API_URL = 'http://localhost:3000';
 let colaActual = 'Principal';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a los IDs exactos de tu HTML
-    const btnPush = document.getElementById('btnPush');       // Funciona como Enqueue
-    const btnPop = document.getElementById('btnPop');         // Funciona como Dequeue
-    const btnClear = document.getElementById('btnClearCola'); // Tu botón de vaciar
+    cargarListaColas();
+    actualizarVista();
+
+    // Referencias DOM
+    const btnPush = document.getElementById('btnPush');       // Enqueue
+    const btnPop = document.getElementById('btnPop');         // Dequeue
+    const btnClear = document.getElementById('btnClearCola'); // Vaciar
     const inputElemento = document.getElementById('inputElemento');
     const selectCola = document.getElementById('selectCola');
     const btnCrear = document.getElementById('btnCrearCola');
     const inputNueva = document.getElementById('inputNuevaCola');
 
-    // Carga inicial
-    cargarListaColas();
-    actualizarVista();
-
-    // 1. EVENTO PUSH (En realidad es Enqueue)
+    // --- 1. EVENTO ENQUEUE (Push) ---
     btnPush.addEventListener('click', async () => {
         const valor = inputElemento.value.trim();
         if (valor) {
@@ -25,23 +24,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ name: colaActual, elemento: valor })
             });
             inputElemento.value = '';
-            actualizarVista();
+            
+            // true = activar animación de entrada para el nuevo elemento
+            actualizarVista(true); 
             generarCodigoC('enqueue', valor);
         }
     });
 
-    // 2. EVENTO POP (En realidad es Dequeue)
+    // --- 2. EVENTO DEQUEUE (Pop con Animación) ---
     btnPop.addEventListener('click', async () => {
-        await fetch(`${API_URL}/dequeue`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: colaActual })
-        });
-        actualizarVista();
-        generarCodigoC('dequeue');
+        const stackView = document.getElementById('stackView');
+        // En una Cola visualizada de arriba a abajo, el primero es el 'firstChild'
+        const elementoFrente = stackView.firstElementChild;
+
+        if (elementoFrente && elementoFrente.tagName === "DIV") {
+            elementoFrente.classList.add("saliendo-pop");
+            setTimeout(async () => {
+                await fetch(`${API_URL}/dequeue`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: colaActual })
+                });
+                actualizarVista();
+                generarCodigoC('dequeue');
+            }, 500); 
+        } else {
+            await fetch(`${API_URL}/dequeue`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: colaActual })
+            });
+            actualizarVista();
+            generarCodigoC('dequeue');
+        }
     });
 
-    // 3. EVENTO VACIAR
+    // --- 3. EVENTO VACIAR ---
     btnClear.addEventListener('click', async () => {
         await fetch(`${API_URL}/clearQueue`, {
             method: 'POST',
@@ -52,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         generarCodigoC('clear');
     });
 
-    // 4. CREAR NUEVA COLA
+    // --- 4. CREAR NUEVA COLA ---
     btnCrear.addEventListener('click', async () => {
         const nombre = inputNueva.value.trim();
         if(nombre) {
@@ -66,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 5. CAMBIAR DE COLA
+    // --- 5. CAMBIAR DE COLA ---
     selectCola.addEventListener('change', (e) => {
         colaActual = e.target.value;
         if(document.getElementById('tituloColaActual')) {
@@ -94,40 +112,36 @@ async function cargarListaColas() {
     });
 }
 
-async function actualizarVista() {
+async function actualizarVista(animarNuevo = false) {
     const res = await fetch(`${API_URL}/queue/${colaActual}`);
     const cola = await res.json();
     
-    // Usamos 'stackView' porque así se llama en tu HTML
     const view = document.getElementById('stackView'); 
     view.innerHTML = '';
-    
-    // Forzamos estilo horizontal para que parezca Cola, no Pila
-    view.style.display = 'flex';
-    view.style.flexWrap = 'wrap';
-    view.style.gap = '10px';
-    view.style.marginTop = '20px';
+    view.style.flexDirection = 'column'; 
+    view.style.justifyContent = 'flex-start';
 
     if (cola.length === 0) {
-        view.innerHTML = '<p style="width:100%">Cola vacía</p>';
+        view.innerHTML = '<p>Cola vacía</p>';
         return;
     }
-
     cola.forEach((item, index) => {
         const div = document.createElement('div');
-        div.style.cssText = 'border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; min-width: 50px; text-align: center;';
+        div.classList.add('elemento-pila'); 
         
-        // Identificar Frente y Final
+        let texto = item;
         if (index === 0) {
-            div.style.backgroundColor = '#e8f5e9'; // Verde claro para el que va a salir
-            div.style.fontWeight = 'bold';
-            div.innerHTML = `${item}<br><small>(Frente)</small>`;
+            div.style.borderLeft = "5px solid #2ecc71"; 
+            texto += " (FRENTE)";
         } else if (index === cola.length - 1) {
-            div.innerHTML = `${item}<br><small>(Final)</small>`;
-        } else {
-            div.textContent = item;
+            div.style.borderLeft = "5px solid #f1c40f";
+            texto += " (FINAL)";
+            if (animarNuevo) {
+                div.classList.add("nuevo-push");
+            }
         }
-        
+
+        div.textContent = texto;
         view.appendChild(div);
     });
 }
@@ -138,21 +152,22 @@ function generarCodigoC(accion, valor = '') {
     const varName = colaActual.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
 
     switch(accion) {
-        case 'enqueue': // Botón Push
+        case 'enqueue':
             codigo = `// Enqueue: Agregando '${valor}' al final\n` +
-                     `cola[final] = "${valor}";\n` +
-                     `final++;`;
+                     `if (rear < MAX) {\n` +
+                     `    ${varName}[rear++] = "${valor}";\n` +
+                     `} else printf("Overflow");`;
             break;
-        case 'dequeue': // Botón Pop
+        case 'dequeue': 
             codigo = `// Dequeue: Sacando del frente\n` +
-                     `elemento = cola[frente];\n` +
-                     `frente++;`;
+                     `if (front == rear) printf("Underflow");\n` +
+                     `else elemento = ${varName}[front++];`;
             break;
         case 'switch':
             codigo = `// Seleccionando cola: ${varName}`;
             break;
         case 'clear':
-            codigo = `frente = 0; final = 0;`;
+            codigo = `front = 0; rear = 0; // Reiniciar punteros`;
             break;
     }
     view.innerText = codigo;

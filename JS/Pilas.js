@@ -1,5 +1,5 @@
 const API_URL = "http://localhost:3000";
-let pilaActual = "Principal"; // Pila por defecto
+let pilaActual = "Principal";
 
 document.addEventListener("DOMContentLoaded", function () {
   cargarListaPilas();
@@ -29,13 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ name: nombre }),
       });
       document.getElementById("inputNuevaPila").value = "";
-      cargarListaPilas(); // Recargar el select
+      cargarListaPilas();
     }
   });
-
-  // --- LÓGICA EXISTENTE MODIFICADA (Push/Pop/Clear) ---
-  // Ahora enviamos { name: pilaActual, ... } en el body
-
+  
   document.getElementById("btnPush").addEventListener("click", async () => {
     const valor = document.getElementById("inputElemento").value.trim();
     if (valor) {
@@ -45,24 +42,42 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ name: pilaActual, elemento: valor }),
       });
       document.getElementById("inputElemento").value = "";
-      actualizarVista();
-      generarCodigoC("push", valor); // <--- ACTUALIZAR CÓDIGO C
+      actualizarVista(true); 
+      
+      generarCodigoC("push", valor);
     }
   });
 
+  // --- LÓGICA DE POP CON EFECTO ROJO ---
   document.getElementById("btnPop").addEventListener("click", async () => {
-    await fetch(`${API_URL}/pop`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: pilaActual }),
-    });
-    actualizarVista();
-    generarCodigoC("pop"); // <--- ACTUALIZAR CÓDIGO C
+    const stackView = document.getElementById("stackView");
+    const topeVisual = stackView.firstElementChild;
+
+    // Si hay un elemento real (div) para animar
+    if (topeVisual && topeVisual.tagName === "DIV") {
+        topeVisual.classList.add("saliendo-pop");
+        setTimeout(async () => {
+            await fetch(`${API_URL}/pop`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: pilaActual }),
+            });
+            actualizarVista(); 
+            generarCodigoC("pop");
+        }, 500); 
+
+    } else {
+        await fetch(`${API_URL}/pop`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: pilaActual }),
+        });
+        actualizarVista();
+        generarCodigoC("pop");
+    }
   });
 
-  document
-    .getElementById("btnClearPila")
-    .addEventListener("click", async () => {
+  document.getElementById("btnClearPila").addEventListener("click", async () => {
       await fetch(`${API_URL}/clear`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       actualizarVista();
       generarCodigoC("clear");
-    });
+  });
 });
 
 // --- FUNCIONES AUXILIARES ---
@@ -90,7 +105,7 @@ async function cargarListaPilas() {
   });
 }
 
-async function actualizarVista() {
+async function actualizarVista(animarNuevo = false) {
   const res = await fetch(`${API_URL}/pila/${pilaActual}`);
   const pila = await res.json();
 
@@ -104,12 +119,18 @@ async function actualizarVista() {
 
   for (let i = pila.length - 1; i >= 0; i--) {
     const div = document.createElement("div");
-    div.style.cssText =
+    div.classList.add("elemento-pila"); 
+    
+    div.style.cssText +=
       "border: 1px solid #ccc; padding: 10px; margin: 5px 0; background-color: #f9f9f9;";
     if (i === pila.length - 1) {
       div.style.cssText +=
         "font-weight: bold; background-color: #e3f2fd; border-color: #2196F3;";
       div.textContent = pila[i] + " (TOPE)";
+      if (animarNuevo) {
+          div.classList.add("nuevo-push");
+      }
+
     } else {
       div.textContent = pila[i];
     }
@@ -117,12 +138,10 @@ async function actualizarVista() {
   }
 }
 
-// --- GENERADOR DE CÓDIGO C (Simulado) ---
+// --- GENERADOR DE CÓDIGO C (Sin cambios) ---
 function generarCodigoC(accion, valor = "") {
   const view = document.getElementById("codigoC");
   let codigo = "";
-
-  // Nombre de variable seguro para C (sin espacios)
   const varName = pilaActual.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
 
   switch (accion) {
@@ -154,7 +173,5 @@ function generarCodigoC(accion, valor = "") {
       codigo = `// Vaciando pila\n` + `top = -1; // Reiniciar índice del tope`;
       break;
   }
-
-  // Efecto de mecanografía simple
   view.innerText = codigo;
 }
