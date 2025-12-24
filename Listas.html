@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listas Enlazadas</title>
+    <link rel="stylesheet" href="Style/Style.css" />
+  </head>
+
+  <body>
+    <section class="pagina-pilas">
+      <h2>Listas Enlazadas</h2>
+      <h3>¿Qué son las listas?</h3>
+      <p>
+        Una lista enlazada es una colección de nodos donde cada nodo contiene un
+        valor y una referencia (puntero) al siguiente nodo. A diferencia de los
+        arreglos, los elementos no están contiguos en memoria. Aquí simulamos
+        una <strong>Lista Simple</strong>.
+      </p>
+
+      <div class="controles-principales" style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background: white;">
+          <h4>Mis Listas</h4>
+          <select id="selectLista"></select>
+          <div style="margin-top: 5px">
+            <input type="text" id="inputNuevaLista" placeholder="Nombre nueva lista" size="15" />
+            <button id="btnCrearLista">+</button>
+          </div>
+        </div>
+
+        <div style="flex-grow: 1; background: #282c34; color: #abb2bf; padding: 10px; border-radius: 5px; font-family: monospace;">
+          <h4 style="color: #61dafb; margin: 0 0 10px 0;">Código C (Simulado)</h4>
+          <pre id="codigoC" style="margin: 0; white-space: pre-wrap;">// Selecciona una operación...</pre>
+        </div>
+      </div>
+
+      <div class="operaciones">
+        <h3 id="tituloListaActual">Trabajando en: Principal</h3>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+            <input id="inputElemento" type="text" placeholder="Valor del nodo" style="flex-grow: 1;" />
+            <button id="btnAddHead" style="background-color: #2ecc71;">+ Inicio (Head)</button>
+            <button id="btnAddTail" style="background-color: #3498db;">+ Final (Tail)</button>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="btnRemoveHead" style="background-color: #e74c3c;">- Eliminar Inicio</button>
+            <button id="btnRemoveTail" style="background-color: #c0392b;">- Eliminar Final</button>
+            <button id="btnClearList" style="background-color: #f39c12;">Vaciar Lista</button>
+        </div>
+      </div>
+
+      <div id="listView" class="contenedor-lista"></div>
+    </section>
+
+    <script src="JS/Listas.js"></script>
+  </body>
+</html>

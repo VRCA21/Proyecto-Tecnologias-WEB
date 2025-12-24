@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Dancing+Script:wght@400..700&display=swap');
 
-/* --- 1. Variables y Estilos Base (Globales) --- */
+/* --- Variables y Estilos Base --- */
 :root {
     --color_principal: #278cff;
     --color_secundario: #eee;
@@ -22,8 +22,6 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-    
-    /* Configuración de fuente base para el contenido */
     font-family: var(--tipofuente_secundaria); 
     font-size: 1.6rem; 
     line-height: 1.6;
@@ -119,7 +117,7 @@ main {
 }
 
 
-/* --- 2. Estilos Específicos de la Sección de Pilas --- */
+/* --- Estilos de la Sección de Pilas --- */
 
 .pagina-pilas {
     max-width: 900px;
@@ -167,6 +165,77 @@ main {
     gap: 10px;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.pagina-listas {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.pagina-listas h2 {
+    font-family: var(--tipofuente_secundaria);
+    font-size: 3.2rem;
+    color: #004A77; 
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    text-align: left;
+}
+
+.pagina-listas h3 {
+    font-size: 2.4rem;
+    margin-top: 20px;
+    color: #333;
+}
+
+.pagina-listas h4 {
+    margin-top: 30px;
+    color: #333;
+    font-size: 2rem;
+}
+
+.pagina-listas h3 + p {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border-left: 5px solid var(--color_principal);
+}
+
+.pagina-listas strong {
+    color: var(--color_principal);
+}
+
+/* Contenedor de los controles */
+.pagina-listas > div:nth-of-type(1) { 
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* --- Estilos para Listas Enlazadas --- */
+
+.contenedor-lista {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 20px;
+    background-color: #f7f9fb;
+    border: 2px solid var(--color_principal);
+    border-radius: 5px;
+    min-height: 150px;
+}
+
+.nodo-wrapper {
+    transition: all 0.5s ease;
+}
+
+.Listas {
+    border: 3px solid white; /* Resaltar en la home */
 }
 
 #inputElemento {
@@ -231,7 +300,7 @@ main {
 }
 
 
-/* --- 3. ESTILOS INTERACTIVOS DE LOS ELEMENTOS DE LA PILA (ACTUALIZADOS) --- */
+/* --- 3ESTILOS INTERACTIVOS DE LOS ELEMENTOS DE LA PILA --- */
 
 .elemento-pila {
     width: 90%;
@@ -243,8 +312,6 @@ main {
     border-radius: 3px;
     color: #004A77;
     font-weight: bold;
-    
-    /* Transición base para movimientos suaves */
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
     opacity: 1;
     transform: scale(1);
@@ -260,7 +327,7 @@ main {
 
 /* --- ANIMACIONES DE ENTRADA Y SALIDA --- */
 
-/* 1. Definición de la animación de entrada (rebote elástico) */
+/* Animacion de entrada*/
 @keyframes entradaEpica {
     0% {
         opacity: 0;
@@ -275,7 +342,7 @@ main {
     }
 }
 
-/* 2. Clase para el elemento nuevo (PUSH) */
+/* Elemento nuevo (PUSH) */
 /* Se activa cuando JS añade la clase .nuevo-push */
 .elemento-pila.nuevo-push {
     animation: entradaEpica 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -287,14 +354,10 @@ main {
 /* 3. Clase para el elemento que sale (POP) */
 /* Se activa cuando JS añade la clase .saliendo-pop */
 .elemento-pila.saliendo-pop {
-    background-color: #ef4444 !important; /* ROJO intenso */
+    background-color: #ef4444 !important;
     color: white !important;
     border-color: #b91c1c !important;
-    
-    /* Animación de salida: se mueve a la derecha y desaparece */
     transform: translateX(100px) rotate(20deg) scale(0.8);
     opacity: 0;
-    
-    /* Aseguramos que la transición dure lo mismo que el timeout en JS */
     transition: all 0.5s ease-in; 
 }

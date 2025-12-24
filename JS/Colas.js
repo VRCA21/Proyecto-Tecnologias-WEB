@@ -6,15 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarVista();
 
     // Referencias DOM
-    const btnPush = document.getElementById('btnPush');       // Enqueue
-    const btnPop = document.getElementById('btnPop');         // Dequeue
-    const btnClear = document.getElementById('btnClearCola'); // Vaciar
+    const btnPush = document.getElementById('btnPush');       
+    const btnPop = document.getElementById('btnPop');        
+    const btnClear = document.getElementById('btnClearCola'); 
     const inputElemento = document.getElementById('inputElemento');
     const selectCola = document.getElementById('selectCola');
     const btnCrear = document.getElementById('btnCrearCola');
     const inputNueva = document.getElementById('inputNuevaCola');
 
-    // --- 1. EVENTO ENQUEUE (Push) ---
+    // --- EVENTO ENQUEUE (Push) ---
     btnPush.addEventListener('click', async () => {
         const valor = inputElemento.value.trim();
         if (valor) {
@@ -24,17 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ name: colaActual, elemento: valor })
             });
             inputElemento.value = '';
-            
-            // true = activar animación de entrada para el nuevo elemento
             actualizarVista(true); 
             generarCodigoC('enqueue', valor);
         }
     });
 
-    // --- 2. EVENTO DEQUEUE (Pop con Animación) ---
+    // --- EVENTO DEQUEUE ---
     btnPop.addEventListener('click', async () => {
         const stackView = document.getElementById('stackView');
-        // En una Cola visualizada de arriba a abajo, el primero es el 'firstChild'
         const elementoFrente = stackView.firstElementChild;
 
         if (elementoFrente && elementoFrente.tagName === "DIV") {
@@ -59,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- 3. EVENTO VACIAR ---
+    // --- EVENTO VACIAR ---
     btnClear.addEventListener('click', async () => {
         await fetch(`${API_URL}/clearQueue`, {
             method: 'POST',
@@ -70,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         generarCodigoC('clear');
     });
 
-    // --- 4. CREAR NUEVA COLA ---
+    // --- CREAR NUEVA COLA ---
     btnCrear.addEventListener('click', async () => {
         const nombre = inputNueva.value.trim();
         if(nombre) {
@@ -84,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- 5. CAMBIAR DE COLA ---
+    // --- CAMBIAR DE COLA ---
     selectCola.addEventListener('change', (e) => {
         colaActual = e.target.value;
         if(document.getElementById('tituloColaActual')) {

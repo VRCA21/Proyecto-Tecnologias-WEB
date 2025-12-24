@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // --- LÓGICA DE POP CON EFECTO ROJO ---
+  // --- LÓGICA DE POP ---
   document.getElementById("btnPop").addEventListener("click", async () => {
     const stackView = document.getElementById("stackView");
     const topeVisual = stackView.firstElementChild;
@@ -138,7 +138,7 @@ async function actualizarVista(animarNuevo = false) {
   }
 }
 
-// --- GENERADOR DE CÓDIGO C (Sin cambios) ---
+// --- GENERADOR DE CÓDIGO C  ---
 function generarCodigoC(accion, valor = "") {
   const view = document.getElementById("codigoC");
   let codigo = "";
