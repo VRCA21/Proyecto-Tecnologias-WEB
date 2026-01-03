@@ -11,14 +11,16 @@
     <section class="pagina-pilas">
       <h2>Listas Enlazadas</h2>
       <h3>¿Qué son las listas?</h3>
+      <!--EXPLICACION LISTAS-->
       <p>
         Una lista enlazada es una colección de nodos donde cada nodo contiene un
         valor y una referencia (puntero) al siguiente nodo. A diferencia de los
         arreglos, los elementos no están contiguos en memoria. Aquí simulamos
         una <strong>Lista Simple</strong>.
       </p>
-
+      
       <div class="controles-principales" style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <!--CREACION DE LISTAS Y ALMACENAMIENTO-->
         <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background: white;">
           <h4>Mis Listas</h4>
           <select id="selectLista"></select>
@@ -27,13 +29,15 @@
             <button id="btnCrearLista">+</button>
           </div>
         </div>
-
+        
+        <!--CODIGO EN C-->
         <div style="flex-grow: 1; background: #282c34; color: #abb2bf; padding: 10px; border-radius: 5px; font-family: monospace;">
           <h4 style="color: #61dafb; margin: 0 0 10px 0;">Código C (Simulado)</h4>
           <pre id="codigoC" style="margin: 0; white-space: pre-wrap;">// Selecciona una operación...</pre>
         </div>
       </div>
-
+      
+      <!--CONTROL DE LAS LISTAS-->
       <div class="operaciones">
         <h3 id="tituloListaActual">Trabajando en: Principal</h3>
         

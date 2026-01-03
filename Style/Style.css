@@ -35,7 +35,6 @@ h2, h3 {
     text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
 }
 .controles-principales > div {
-    /* Ajuste para que el recuadro blanco original sea también de cristal */
     background: rgba(255, 255, 255, 0.1) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: white;
@@ -234,7 +233,7 @@ main {
     margin-bottom: 20px;
 }
 
-/* --- Estilos para Listas Enlazadas --- */
+/* --- Estilos para Listas  --- */
 
 .contenedor-lista {
     display: flex;
@@ -254,7 +253,7 @@ main {
 }
 
 .Listas {
-    border: 3px solid white; /* Resaltar en la home */
+    border: 3px solid white;
 }
 
 #inputElemento {
@@ -277,7 +276,6 @@ main {
     font-size: 1.6rem;
 }
 
-/* Botones de Acción */
 #btnPush {
     background-image: linear-gradient(to top, #1c70c0, var(--color_principal));
 }
@@ -318,8 +316,7 @@ main {
     transition: all 0.3s ease-out;
 }
 
-
-/* --- 3ESTILOS INTERACTIVOS DE LOS ELEMENTOS DE LA PILA --- */
+/* ESTILOS INTERACTIVOS DE LOS ELEMENTOS DE LA PILA*/
 
 .elemento-pila {
     width: 90%;
@@ -381,7 +378,7 @@ main {
     transition: all 0.5s ease-in; 
 }
 /* ============================================================
-   ESTILOS ESPECÍFICOS PARA LISTAS ENLAZADAS (DISEÑO FUTURISTA)
+   ESTILOS ESPECÍFICOS PARA LISTAS ENLAZADAS
    ============================================================ */
 
 /* Contenedor Principal de la sección de listas */
@@ -396,7 +393,7 @@ main {
 
 /* Rediseño del área donde se ven los nodos */
 .contenedor-lista {
-    background-color: #0f172a !important; /* Fondo oscuro tipo terminal */
+    background-color: #0f172a !important;
     border: 2px solid #00d2ff !important;
     box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.2);
     gap: 0; /* Controlado por el JS */
@@ -404,7 +401,7 @@ main {
     align-items: center;
 }
 
-/* Estilo del Nodo Circular Futurista */
+/* Estilo del Nodo */
 .nodo {
     background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
     width: 65px;
@@ -436,7 +433,7 @@ main {
     50% { transform: translateX(5px); opacity: 1; }
 }
 
-/* Estilo para los botones de la sección listas (Sin afectar los de navegación) */
+/* Estilo para los botones de la sección listas */
 .operaciones button {
     border-radius: 8px;
     text-transform: uppercase;
@@ -452,7 +449,7 @@ main {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Nodo NULL con estética de código */
+/* Nodo NULL */
 .nodo-null {
     background: rgba(0, 0, 0, 0.3) !important;
     border: 1px dashed rgba(255, 255, 255, 0.4) !important;
@@ -462,7 +459,6 @@ main {
     font-size: 1.4rem;
 }
 
-/* Sobreescribir el fondo del código C para que sea legible */
 #codigoC {
     background: #1e1e1e !important;
     color: #d4d4d4 !important;

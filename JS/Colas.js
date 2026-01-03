@@ -1,51 +1,69 @@
-const API_URL = 'http://localhost:3000';
-let colaActual = 'Principal';
+// --- CONFIGURACIÓN INICIAL ---
+const API_URL = 'http://localhost:3000'; // Servidor backend
+let colaActual = 'Principal'; // Cola seleccionada por defecto
 
+// Se ejecuta al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    cargarListaColas();
-    actualizarVista();
+    cargarListaColas(); // Llena el selector
+    actualizarVista();  // Dibuja la cola inicial
 
-    // Referencias DOM
-    const btnPush = document.getElementById('btnPush');       
-    const btnPop = document.getElementById('btnPop');        
-    const btnClear = document.getElementById('btnClearCola'); 
+    // Referencias a elementos del DOM
+    const btnPush = document.getElementById('btnPush');       // Botón "Formarse" (Enqueue)
+    const btnPop = document.getElementById('btnPop');         // Botón "Atender/Salir" (Dequeue)
+    const btnClear = document.getElementById('btnClearCola'); // Botón Vaciar
     const inputElemento = document.getElementById('inputElemento');
     const selectCola = document.getElementById('selectCola');
     const btnCrear = document.getElementById('btnCrearCola');
     const inputNueva = document.getElementById('inputNuevaCola');
 
-    // --- EVENTO ENQUEUE (Push) ---
+    // EVENTO ENQUEUE (PUSH ) ---
+    // En una cola, los nuevos elementos siempre van al FINAL.
     btnPush.addEventListener('click', async () => {
         const valor = inputElemento.value.trim();
+        
         if (valor) {
+            // Petición al servidor para agregar al final
             await fetch(`${API_URL}/enqueue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: colaActual, elemento: valor })
             });
+            
             inputElemento.value = '';
+            
+            // Actualizamos vista activando la animación para el nuevo elemento (que estará abajo)
             actualizarVista(true); 
+            
+            // Mostramos el código C de "enqueue"
             generarCodigoC('enqueue', valor);
         }
     });
 
-    // --- EVENTO DEQUEUE ---
+    // --- EVENTO DEQUEUE (POP / ATENDER) ---
+    // En una cola, el que sale es el del FRENTE (el primero que llegó).
     btnPop.addEventListener('click', async () => {
         const stackView = document.getElementById('stackView');
+        // Seleccionamos visualmente el primer elemento (el de hasta arriba)
         const elementoFrente = stackView.firstElementChild;
 
         if (elementoFrente && elementoFrente.tagName === "DIV") {
+            // 1. Animación: Se pone rojo y sale
             elementoFrente.classList.add("saliendo-pop");
+            
+            // 2. Esperamos a que termine la animación
             setTimeout(async () => {
+                // 3. Petición al servidor para eliminar el primero (shift)
                 await fetch(`${API_URL}/dequeue`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: colaActual })
                 });
-                actualizarVista();
+                
+                actualizarVista(); // Redibujamos la fila (todos avanzan un lugar)
                 generarCodigoC('dequeue');
             }, 500); 
         } else {
+            // Si estaba vacía, mandamos la petición directo
             await fetch(`${API_URL}/dequeue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -56,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- EVENTO VACIAR ---
+    // --- VACIAR COLA ---
     btnClear.addEventListener('click', async () => {
         await fetch(`${API_URL}/clearQueue`, {
             method: 'POST',
@@ -92,8 +110,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// --- FUNCIONES AUXILIARES ---
+// --- FUNCIONES VISUALES  ---
 
+// Carga las colas disponibles en el select
 async function cargarListaColas() {
     const res = await fetch(`${API_URL}/queues`);
     const lista = await res.json();
@@ -109,12 +128,16 @@ async function cargarListaColas() {
     });
 }
 
+// Dibuja la cola
 async function actualizarVista(animarNuevo = false) {
     const res = await fetch(`${API_URL}/queue/${colaActual}`);
-    const cola = await res.json();
+    const cola = await res.json(); // Array con los datos [A, B, C]
     
     const view = document.getElementById('stackView'); 
     view.innerHTML = '';
+    
+    // Configuramos CSS para que sea una columna normal (de arriba a abajo)
+    // El elemento 0 (Frente) queda arriba.
     view.style.flexDirection = 'column'; 
     view.style.justifyContent = 'flex-start';
 
@@ -122,17 +145,25 @@ async function actualizarVista(animarNuevo = false) {
         view.innerHTML = '<p>Cola vacía</p>';
         return;
     }
+    
+    // Recorremos el array en orden normal (0 al final)
     cola.forEach((item, index) => {
         const div = document.createElement('div');
-        div.classList.add('elemento-pila'); 
+        div.classList.add('elemento-pila'); // Reusamos estilos
         
         let texto = item;
+        
+        // Marcamos el FRENTE (índice 0) con verde
         if (index === 0) {
             div.style.borderLeft = "5px solid #2ecc71"; 
             texto += " (FRENTE)";
+        
+        // Marcamos el FINAL (último índice) con amarillo
         } else if (index === cola.length - 1) {
             div.style.borderLeft = "5px solid #f1c40f";
             texto += " (FINAL)";
+            
+            // Si es nuevo, animamos SOLO el elemento final
             if (animarNuevo) {
                 div.classList.add("nuevo-push");
             }
@@ -143,6 +174,7 @@ async function actualizarVista(animarNuevo = false) {
     });
 }
 
+// --- GENERADOR DE CÓDIGO C ---
 function generarCodigoC(accion, valor = '') {
     const view = document.getElementById('codigoC');
     let codigo = '';

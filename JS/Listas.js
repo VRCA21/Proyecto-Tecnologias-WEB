@@ -1,73 +1,96 @@
-const API_URL = "http://localhost:3000";
-let listaActual = "Principal";
+// --- CONFIGURACIÓN INICIAL ---
+const API_URL = "http://localhost:3000"; // Conexión con el servidor
+let listaActual = "Principal"; // Nombre de la lista que estamos editando
 
+// Se ejecuta al cargar la página
 document.addEventListener("DOMContentLoaded", function () {
-  cargarListas();
-  actualizarVista();
+  cargarListas(); // Llena el selector con las listas disponibles
+  actualizarVista(); // Dibuja la lista inicial en pantalla
 
-  // Referencias DOM
+  // Referencias a elementos del HTML
   const selectLista = document.getElementById("selectLista");
   const inputElemento = document.getElementById("inputElemento");
 
-  // --- BOTONES ---
+  // --- BOTONES DE ACCIÓN ---
   
-  // Agregar al Inicio (Head)
+  // AGREGAR AL INICIO (HEAD)
   document.getElementById("btnAddHead").addEventListener("click", async () => {
     const valor = inputElemento.value.trim();
     if (valor) {
+      // Petición al servidor para agregar al principio
       await fetch(`${API_URL}/list/addHead`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: listaActual, elemento: valor }),
       });
-      inputElemento.value = "";
-      actualizarVista(true, "head"); // true = animar, 'head' = lugar
+      
+      inputElemento.value = ""; // Limpiar
+      
+      // Actualizamos la vista indicando que la animación debe ser en el 'head'
+      actualizarVista(true, "head"); 
+      
+      // Mostramos el código C correspondiente a esta operación
       generarCodigoC("addHead", valor);
     }
   });
 
-  // Agregar al Final (Tail)
+  // AGREGAR AL FINAL (TAIL)
+  // Aquí tendríamos que recorrer toda la lista hasta encontrar el último nodo.
   document.getElementById("btnAddTail").addEventListener("click", async () => {
     const valor = inputElemento.value.trim();
+    
     if (valor) {
+      // Petición al servidor para agregar al final
       await fetch(`${API_URL}/list/addTail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: listaActual, elemento: valor }),
       });
+      
       inputElemento.value = "";
+      
+      // Actualizamos indicando que la animación es en la cola ('tail')
       actualizarVista(true, "tail");
       generarCodigoC("addTail", valor);
     }
   });
 
-  // Eliminar Inicio
+  // ELIMINAR EL PRIMERO (HEAD)
   document.getElementById("btnRemoveHead").addEventListener("click", async () => {
     const view = document.getElementById("listView");
+    // Buscamos visualmente el primer nodo
     const primerNodo = view.querySelector(".nodo-wrapper"); 
 
     if (primerNodo) {
+        // 1. Animación: Se pone rojo y sale volando
         primerNodo.classList.add("saliendo-pop");
+        
+        // 2. Esperamos a que termine la animación visual
         setTimeout(async () => {
+            // 3. Borramos realmente del almacenamiento
             await fetch(`${API_URL}/list/removeHead`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: listaActual }),
             });
-            actualizarVista();
+            actualizarVista(); // Recargamos
             generarCodigoC("removeHead");
         }, 500);
     }
   });
 
-  // Eliminar Final
+  // ELIMINAR EL ÚLTIMO (TAIL)
   document.getElementById("btnRemoveTail").addEventListener("click", async () => {
     const view = document.getElementById("listView");
     const nodos = view.querySelectorAll(".nodo-wrapper");
+    // Buscamos visualmente el último nodo de la lista
     const ultimoNodo = nodos[nodos.length - 1];
 
     if (ultimoNodo) {
+        // 1. Animación de salida
         ultimoNodo.classList.add("saliendo-pop");
+        
+        // 2. Espera y borrado lógico
         setTimeout(async () => {
             await fetch(`${API_URL}/list/removeTail`, {
                 method: "POST",
@@ -80,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Vaciar y Crear
+  // VACIAR LISTA COMPLETA
   document.getElementById("btnClearList").addEventListener("click", async () => {
       await fetch(`${API_URL}/clearList`, {
         method: "POST",
@@ -91,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
       generarCodigoC("clear");
   });
 
+  // CREAR NUEVA LISTA
   document.getElementById("btnCrearLista").addEventListener("click", async () => {
     const nombre = document.getElementById("inputNuevaLista").value.trim();
     if (nombre) {
@@ -104,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Cambio de lista
+  // --- CAMBIAR DE LISTA ---
   selectLista.addEventListener("change", (e) => {
     listaActual = e.target.value;
     document.getElementById("tituloListaActual").innerText = `Trabajando en: ${listaActual}`;
@@ -113,8 +137,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// --- FUNCIONES VISUALES ---
+// --- FUNCIONES VISUALES (DIBUJAR LA LISTA) ---
 
+// Obtiene todas las listas creadas para el menú desplegable
 async function cargarListas() {
   const res = await fetch(`${API_URL}/lists`);
   const lista = await res.json();
@@ -129,32 +154,34 @@ async function cargarListas() {
   });
 }
 
+// Dibuja los nodos horizontalmente con flechas
 async function actualizarVista(animar = false, lugar = "tail") {
   const res = await fetch(`${API_URL}/list/${listaActual}`);
   const datos = await res.json();
   const view = document.getElementById("listView");
-  view.innerHTML = "";
+  view.innerHTML = ""; // Limpiamos pantalla
 
   if (datos.length === 0) {
     view.innerHTML = "<p>Lista vacía (NULL)</p>";
     return;
   }
 
-  // Renderizar nodos
+  // --- RENDERIZADO DE NODOS ---
   datos.forEach((valor, index) => {
+    // Creamos un contenedor "wrapper" que agrupa: [NODO] + [FLECHA]
     const wrapper = document.createElement("div");
     wrapper.className = "nodo-wrapper";
     wrapper.style.display = "flex";
     wrapper.style.alignItems = "center";
 
-    // El Nodo 
+    //  Dibujamos la caja del NODO
     const nodo = document.createElement("div");
     nodo.className = "elemento-pila"; 
     nodo.style.margin = "0 5px";
     nodo.style.width = "auto";
     nodo.style.minWidth = "60px";
     
-    // Contenido del nodo
+    // Agregamos etiquetas visuales HEAD y TAIL
     let html = `<div>${valor}</div>`;
     if(index === 0) html += `<small style='color:green; font-weight:bold'>HEAD</small>`;
     if(index === datos.length -1) html += `<br><small style='color:blue'>TAIL</small>`;
@@ -162,7 +189,7 @@ async function actualizarVista(animar = false, lugar = "tail") {
 
     wrapper.appendChild(nodo);
 
-    // La Flecha (excepto si es el último visualmente, aunque añadiremos NULL al final)
+    // Dibujamos la FLECHA (pointer)
     const flecha = document.createElement("div");
     flecha.innerHTML = "➜";
     flecha.style.fontSize = "24px";
@@ -170,11 +197,14 @@ async function actualizarVista(animar = false, lugar = "tail") {
     flecha.style.margin = "0 5px";
     wrapper.appendChild(flecha);
 
-    // Animación de entrada
+    // --- LOGICA DE ANIMACIÓN ---
+    // Si estamos animando, decidimos a quién ponerle el efecto "rebote"
     if (animar) {
+        // Si insertamos al inicio, animamos el índice 0
         if (lugar === "head" && index === 0) {
             wrapper.classList.add("nuevo-push");
         }
+        // Si insertamos al final, animamos el último índice
         if (lugar === "tail" && index === datos.length - 1) {
             wrapper.classList.add("nuevo-push");
         }
@@ -183,7 +213,7 @@ async function actualizarVista(animar = false, lugar = "tail") {
     view.appendChild(wrapper);
   });
 
-  // Agregar NULL al final
+  // Agregamos el NULL al final visualmente para completar el diagrama
   const nullDiv = document.createElement("div");
   nullDiv.className = "nodo-null";
   nullDiv.innerHTML = "NULL";
@@ -191,7 +221,8 @@ async function actualizarVista(animar = false, lugar = "tail") {
   view.appendChild(nullDiv);
 }
 
-// --- Generador C ---
+// --- GENERADOR DE CÓDIGO C  ---
+// Muestra cómo se haría esto en programación estructurada en C
 function generarCodigoC(accion, valor = "") {
   const view = document.getElementById("codigoC");
   let codigo = "";
